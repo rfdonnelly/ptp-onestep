@@ -8,11 +8,11 @@ intf=eth1
 curl -LO https://github.com/richardcochran/linuxptp/raw/refs/tags/v4.2/configs/gPTP.cfg
 for host in $hosts; do
     scp -O gPTP.cfg $host:
-end
+done
 
 for host in $hosts; do
     ssh $host tcpdump -i $intf -w $host.pcap &
-end
+done
 
 ssh $tt ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --serverOnly 1 --priority1 0 --priority2 0 &
 ssh $tr ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --clientOnly 1 --step_threshold 1 &
@@ -23,4 +23,4 @@ jobs -p | xargs kill
 
 for host in $hosts; do
     scp -O $host:$host.pcap .
-end
+done
