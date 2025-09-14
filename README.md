@@ -30,4 +30,4 @@ tcpdump: listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 
 + scp -q -O tr:tr.pcap .
 ```
 
-![packet diff](diff.png)
+![packet diff](https://gist.github.com/rfdonnelly/b7c91864ba70970765f9263eb191b97c/raw/a99b2f0d08150dd459e81095cbf5645e75236e9f/diff.png)
