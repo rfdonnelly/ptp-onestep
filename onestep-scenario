@@ -2,12 +2,14 @@
 
 tt=$1
 tr=$2
-hosts=$tt $tr
+hosts="$tt $tr"
 intf=eth1
 
-curl -LO https://github.com/richardcochran/linuxptp/raw/refs/tags/v4.2/configs/gPTP.cfg
+set -x
+
+curl -LO https://github.com/richardcochran/linuxptp/raw/refs/tags/v4.2/configs/gPTP.cfg --silent
 for host in $hosts; do
-    scp -O gPTP.cfg $host:
+    scp -q -O gPTP.cfg $host:
 done
 
 for host in $hosts; do
@@ -19,8 +21,11 @@ ssh $tr ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --clientOnly 1 --
 
 sleep 10
 
-jobs -p | xargs kill
+for host in $hosts; do
+    ssh $host killall ptp4l
+    ssh $host killall tcpdump
+done
 
 for host in $hosts; do
-    scp -O $host:$host.pcap .
+    scp -q -O $host:$host.pcap .
 done
