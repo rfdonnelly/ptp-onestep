@@ -37,7 +37,7 @@ struct ieee1588sync {
     uint16_t flags;
     uint64_t correctionField;
     uint32_t messageTypeSpecific;
-    uint64_t clockIdentity;
+    uint8_t clockIdentity[8];
     uint16_t sourcePortId;
     uint16_t sequenceId;
     uint8_t controlField;
@@ -128,7 +128,6 @@ void send_sync(int fd, const char* ifname) {
         .minorVersionPtp = 1,
         .versionPtp = 2,
         .messageLength = htons(44),
-        .clockIdentity = 0,
         .sourcePortId = 1,
         .sequenceId = 0,
         .logMessagePeriod = -3,
@@ -136,6 +135,10 @@ void send_sync(int fd, const char* ifname) {
     memcpy(pkt.eth.dst, src, 6);
     memcpy(pkt.eth.src, src, 6);
     pkt.version = htons(pkt.version);
+    memcpy(pkt.clockIdentity, src, 3);
+    pkt.clockIdentity[3] = 0xff;
+    pkt.clockIdentity[4] = 0xfe;
+    memcpy(&pkt.clockIdentity[5], &src[3], 3);
 
     for (size_t i = 0; i < sizeof(pkt); i++) {
         printf("%02x ", ((uint8_t*)&pkt)[i]);
