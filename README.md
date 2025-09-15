@@ -1,8 +1,16 @@
 # 1588 one-step hardware timestamping
 
+## Topology
+
+![](topology.drawio.svg)
+
+## Invocation
+
 ```sh
 onestep-scenario <timeTransmitter> <timeReceiver>
 ```
+
+## Example
 
 ```console
 $ ./onestep-scenario tt tr
@@ -29,6 +37,8 @@ tcpdump: listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 
 + scp -q -O tt:tt.pcap .
 + scp -q -O tr:tr.pcap .
 ```
+
+## Results
 
 The packet captures show that the timeTransmitter sent a zeroed timestamp to it's NIC while the timeReceiver received a non-zero timestamp from its NIC.
 
