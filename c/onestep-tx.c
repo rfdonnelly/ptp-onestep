@@ -22,7 +22,15 @@ struct eth_header {
 
 struct ieee1588sync {
     struct eth_header eth;
-    uint16_t version;
+    union {
+        struct {
+            unsigned majorSdoId : 4;
+            unsigned messageType : 4;
+            unsigned minorVersionPtp : 4;
+            unsigned versionPtp : 4;
+        } __attribute__((packed));
+        uint16_t version;
+    };
     uint16_t messageLength;
     uint8_t domainNumber;
     uint8_t minorSdoId;
@@ -116,7 +124,9 @@ void send_sync(int fd, const char* ifname) {
         .eth = {
             .ethertype = htons(ETHERTYPE_PTP),
         },
-        .version = htons(0x1012),
+        .majorSdoId = 1,
+        .minorVersionPtp = 1,
+        .versionPtp = 2,
         .messageLength = htons(44),
         .clockIdentity = 0,
         .sourcePortId = 1,
@@ -125,6 +135,7 @@ void send_sync(int fd, const char* ifname) {
     };
     memcpy(pkt.eth.dst, src, 6);
     memcpy(pkt.eth.src, src, 6);
+    pkt.version = htons(pkt.version);
 
     for (size_t i = 0; i < sizeof(pkt); i++) {
         printf("%02x ", ((uint8_t*)&pkt)[i]);
