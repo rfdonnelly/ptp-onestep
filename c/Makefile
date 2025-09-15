@@ -1,6 +1,9 @@
 all: onestep-tx run
 
-onestep-tx:
+clean:
+	-rm onestep-tx
+
+onestep-tx: onestep-tx.c
 	gcc -o onestep-tx onestep-tx.c
 
 run:
