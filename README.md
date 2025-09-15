@@ -32,4 +32,4 @@ tcpdump: listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 
 
 The packet captures show that the timeTransmitter sent a zeroed timestamp to it's NIC while the timeReceiver received a non-zero timestamp from its NIC.
 
-![packet diff](https://gist.github.com/rfdonnelly/b7c91864ba70970765f9263eb191b97c/raw/a99b2f0d08150dd459e81095cbf5645e75236e9f/diff.png)
+![packet diff](diff.png)
