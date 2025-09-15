@@ -128,8 +128,8 @@ void send_sync(int fd, const char* ifname) {
         .minorVersionPtp = 1,
         .versionPtp = 2,
         .messageLength = htons(44),
-        .sourcePortId = 1,
-        .sequenceId = 0,
+        .sourcePortId = htons(1),
+        .sequenceId = htons(23),
         .logMessagePeriod = -3,
     };
     memcpy(pkt.eth.dst, src, 6);
