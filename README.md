@@ -1,4 +1,4 @@
-# 1588 one-step hardware timestamping
+# 1588 One-step Hardware Timestamping
 
 ## Topology
 
