@@ -90,7 +90,6 @@ void enable_timestamping(int fd, const char *ifname) {
     int err = 0;
 
     struct hwtstamp_config hwtstamp_config = {
-        .flags = 0,
         .tx_type = HWTSTAMP_TX_ONESTEP_SYNC,
         .rx_filter = HWTSTAMP_FILTER_NONE,
     };
