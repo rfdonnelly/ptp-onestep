@@ -24,10 +24,10 @@ struct ieee1588sync {
     struct eth_header eth;
     union {
         struct {
-            unsigned majorSdoId : 4;
             unsigned messageType : 4;
-            unsigned minorVersionPtp : 4;
+            unsigned majorSdoId : 4;
             unsigned versionPtp : 4;
+            unsigned minorVersionPtp : 4;
         } __attribute__((packed));
         uint16_t version;
     };
@@ -134,7 +134,6 @@ void send_sync(int fd, const char* ifname) {
     };
     memcpy(pkt.eth.dst, src, 6);
     memcpy(pkt.eth.src, src, 6);
-    pkt.version = htons(pkt.version);
     memcpy(pkt.clockIdentity, src, 3);
     pkt.clockIdentity[3] = 0xff;
     pkt.clockIdentity[4] = 0xfe;
