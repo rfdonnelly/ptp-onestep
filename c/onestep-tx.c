@@ -132,6 +132,7 @@ void send_sync(int fd, const char* ifname) {
 
     struct ieee1588sync pkt = {
         .eth = {
+            .dst = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e},
             .ethertype = htons(ETHERTYPE_PTP),
         },
         .majorSdoId = 1,
@@ -142,7 +143,6 @@ void send_sync(int fd, const char* ifname) {
         .sequenceId = htons(23),
         .logMessagePeriod = -3,
     };
-    memcpy(pkt.eth.dst, src, 6);
     memcpy(pkt.eth.src, src, 6);
     memcpy(pkt.clockIdentity, src, 3);
     pkt.clockIdentity[3] = 0xff;
