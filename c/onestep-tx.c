@@ -115,6 +115,17 @@ void enable_timestamping(int fd, const char *ifname) {
     assert(!err);
 }
 
+void print_pkt(uint8_t* buf, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        printf("%02x ", buf[i]);
+        if (i % 16 == 15) {
+            printf("\n");
+        } else if (i % 8 == 7) {
+            printf(" ");
+        }
+    }
+}
+
 void send_sync(int fd, const char* ifname) {
     mac_addr src;
     interface_mac_addr(fd, ifname, (uint8_t*)&src);
@@ -138,14 +149,7 @@ void send_sync(int fd, const char* ifname) {
     pkt.clockIdentity[4] = 0xfe;
     memcpy(&pkt.clockIdentity[5], &src[3], 3);
 
-    for (size_t i = 0; i < sizeof(pkt); i++) {
-        printf("%02x ", ((uint8_t*)&pkt)[i]);
-        if (i % 16 == 15) {
-            printf("\n");
-        } else if (i % 8 == 7) {
-            printf(" ");
-        }
-    }
+    print_pkt((uint8_t*)&pkt, sizeof(pkt));
 }
 
 int main() {
