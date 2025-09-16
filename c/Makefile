@@ -13,5 +13,4 @@ run: onestep-tx
 	sudo ./onestep-tx
 
 run-arm: onestep-tx-arm
-	scp -O onestep-tx-arm root@hpscrpitsn0:
-	ssh root@hpscrpitsn0 /root/onestep-tx-arm
+	./run hpscrpitsn0 hpscrpitsn1

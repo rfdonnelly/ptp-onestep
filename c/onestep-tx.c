@@ -124,6 +124,7 @@ void print_pkt(uint8_t* buf, size_t size) {
             printf(" ");
         }
     }
+    printf("\n");
 }
 
 void send_sync(int fd, const char* ifname) {
@@ -149,13 +150,16 @@ void send_sync(int fd, const char* ifname) {
     pkt.clockIdentity[4] = 0xfe;
     memcpy(&pkt.clockIdentity[5], &src[3], 3);
 
+    printf("Sending pkt:\n");
     print_pkt((uint8_t*)&pkt, sizeof(pkt));
+
+    send(fd, &pkt, sizeof(pkt), 0);
 }
 
 int main() {
     const char* ifname = "eth1";
     int fd = create_socket(ifname);
-    /* enable_timestamping(fd, ifname); */
+    enable_timestamping(fd, ifname);
 
     send_sync(fd, ifname);
 }

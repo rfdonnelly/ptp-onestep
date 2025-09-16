@@ -1,0 +1,27 @@
+#!/bin/sh
+
+tx=$1
+rx=$2
+hosts="$tx $rx"
+user=root
+intf=eth1
+
+scp -O onestep-tx-arm $user@$tx:
+
+ssh $user@$tx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >txpkt &
+txpid=$!
+ssh $user@$rx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >rxpkt &
+rxpid=$!
+
+sleep 1
+
+ssh $user@$tx /root/onestep-tx-arm
+
+wait $txpid
+wait $rxpid
+
+# Pad tx packet so we don't get a diff due to padding
+sed -i -r "$ s/^.*$/& 0000/" txpkt
+if diff -U5 txpkt rxpkt; then
+    echo ERROR: Expected packets to differ but they are the same.  Packet was not timestamped.
+fi
