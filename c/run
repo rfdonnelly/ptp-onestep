@@ -8,6 +8,10 @@ intf=eth1
 
 scp -O onestep-tx-arm $user@$tx:
 
+for host in $hosts; do
+    ssh $user@$host killall tcpdump
+done
+
 ssh $user@$tx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >txpkt &
 txpid=$!
 ssh $user@$rx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >rxpkt &
