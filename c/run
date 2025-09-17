@@ -6,10 +6,10 @@ hosts="$tx $rx"
 user=root
 intf=eth1
 
-scp -O onestep-tx-arm $user@$tx:
+scp -q -O tx $user@$tx:
 
 for host in $hosts; do
-    ssh $user@$host killall tcpdump
+    ssh $user@$host killall tcpdump >/dev/null 2>&1
 done
 
 ssh $user@$tx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >txpkt &
@@ -19,16 +19,22 @@ rxpid=$!
 
 sleep 1
 
-ssh $user@$tx /root/onestep-tx-arm
+ssh $user@$tx /root/tx
 
 wait $txpid
 wait $rxpid
 
+echo txpkt
+cat txpkt
+
+echo rxpkt
+cat rxpkt
+
 # Pad tx packet so we don't get a diff due to padding
 sed -i -r "$ s/^.*$/& 0000/" txpkt
 if diff -U5 txpkt rxpkt; then
-    echo FAILED: Packets match => packet was not timestamped
+    echo "FAILED: Packets match => packet was not timestamped"
 else
-    echo PASSED: Packets differ => packet was timestamped
+    echo "PASSED: Packets differ => packet was timestamped"
 fi
 

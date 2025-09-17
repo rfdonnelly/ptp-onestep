@@ -19,7 +19,7 @@ done
 
 sleep 1
 
-ssh $user@$tt ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --serverOnly 1 --priority1 0 --priority2 0 &
+ssh $user@$tt strace /root/ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --serverOnly 1 --priority1 0 --priority2 0 >ptp4l-strace.log 2>&1 &
 ssh $user@$tr ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --clientOnly 1 --step_threshold 1 &
 
 sleep 5

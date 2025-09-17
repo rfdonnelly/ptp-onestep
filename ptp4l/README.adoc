@@ -1,19 +1,18 @@
-# 1588 One-step Hardware Timestamping
+= One-step Timestamping with ptp4l
+:imagesdir: ../images
 
-## Topology
+== Invocation
 
-![](topology.drawio.svg)
+[source,sh]
+----
+./run <timeTransmitter> <timeReceiver>
+----
 
-## Invocation
+== Example
 
-```sh
-onestep-scenario <timeTransmitter> <timeReceiver>
-```
-
-## Example
-
-```console
-$ ./onestep-scenario tt tr
+[source,console]
+----
+$ ./run tt tr
 + curl -LO https://github.com/richardcochran/linuxptp/raw/refs/tags/v4.2/configs/gPTP.cfg --silent
 + scp -q -O gPTP.cfg tt:
 + scp -q -O gPTP.cfg tr:
@@ -36,10 +35,10 @@ tcpdump: listening on eth1, link-type EN10MB (Ethernet), snapshot length 262144 
 0 packets dropped by kernel
 + scp -q -O tt:tt.pcap .
 + scp -q -O tr:tr.pcap .
-```
+----
 
-## Results
+== Results
 
-The packet captures show that the timeTransmitter sent a zeroed timestamp to it's NIC while the timeReceiver received a non-zero timestamp from its NIC.
+The packet capture on the left shows that the timeTransmitter sent a zeroed timestamp to it's NIC while the packet capture on the right shows that the timeReceiver received a non-zero timestamp from its NIC.
 
-![packet diff](diff.png)
+image::diff.png[]

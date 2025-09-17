@@ -1,0 +1,23 @@
+= PTP One-step Hardware Timestamping
+:imagesdir: images
+
+This repository explorers PTP one-step hardware timestamping.
+
+== Scenarios
+
+Two scenarios are provided:
+
+* link:ptp4l/README.adoc[ptp4l] - Performs one-step timestamping using ptp4l
+* link:c/README.adoc[c] - Performs one-step timestamping using C code
+
+== Topology
+
+A point to point link between two systems is used for both scenarios.
+
+image::topology.drawio.svg[]
+
+== Example
+
+The packet capture on the left shows that the timeTransmitter sent a zeroed timestamp to it's NIC while the packet capture on the right shows that the timeReceiver received a non-zero timestamp from its NIC.
+
+image::diff[]

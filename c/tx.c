@@ -86,9 +86,13 @@ int create_socket(const char* ifname) {
     return fd;
 }
 
+// Reference: linuxptp:sk.c
 void enable_timestamping(int fd, const char *ifname) {
     int err = 0;
 
+    // NOTE: Driver seems to require an RX filter even though we aren't
+    // interested in RX here.  Without an RX filter, the ioctl call
+    // returns an error.
     struct hwtstamp_config hwtstamp_config = {
         .tx_type = HWTSTAMP_TX_ONESTEP_SYNC,
         .rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT,
@@ -99,7 +103,7 @@ void enable_timestamping(int fd, const char *ifname) {
     };
     strncpy(ifreq.ifr_name, ifname, strlen(ifname));
 
-    printf("DEBUG fd:%d hwtstamp_config:{tx_type:0x%x rx_filter:0x%x}\n", fd, hwtstamp_config.tx_type, hwtstamp_config.rx_filter);
+    // printf("DEBUG fd:%d hwtstamp_config:{tx_type:0x%x rx_filter:0x%x}\n", fd, hwtstamp_config.tx_type, hwtstamp_config.rx_filter);
     err = ioctl(fd, SIOCSHWTSTAMP, &ifreq);
     assert(!err);
 
@@ -151,8 +155,8 @@ void send_sync(int fd, const char* ifname) {
     pkt.clockIdentity[4] = 0xfe;
     memcpy(&pkt.clockIdentity[5], &src[3], 3);
 
-    printf("Sending pkt:\n");
-    print_pkt((uint8_t*)&pkt, sizeof(pkt));
+    // printf("Sending pkt:\n");
+    // print_pkt((uint8_t*)&pkt, sizeof(pkt));
 
     send(fd, &pkt, sizeof(pkt), 0);
 }

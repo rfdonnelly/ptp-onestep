@@ -1,16 +1,10 @@
-all: run
+CC = $(CROSS_COMPILE)gcc
+CFLAGS = -static
+
+all: tx
 
 clean:
-	-rm onestep-tx
+	-rm tx
 
-onestep-tx: onestep-tx.c
-	gcc -o onestep-tx onestep-tx.c
-
-onestep-tx-arm: onestep-tx.c
-	arm-linux-gnueabihf-gcc -O3 -Wall -static -o onestep-tx-arm onestep-tx.c
-
-run: onestep-tx
-	sudo ./onestep-tx
-
-run-arm: onestep-tx-arm
-	./run hpscrpitsn0 hpscrpitsn1
+tx: tx.c
+	$(CC) $(CFLAGS) -o tx tx.c
