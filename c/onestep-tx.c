@@ -99,7 +99,8 @@ void enable_timestamping(int fd, const char *ifname) {
     };
     strncpy(ifreq.ifr_name, ifname, strlen(ifname));
 
-    err = ioctl(fd, SIOCGHWTSTAMP, &ifreq);
+    printf("DEBUG fd:%d hwtstamp_config:{tx_type:0x%x rx_filter:0x%x}\n", fd, hwtstamp_config.tx_type, hwtstamp_config.rx_filter);
+    err = ioctl(fd, SIOCSHWTSTAMP, &ifreq);
     assert(!err);
 
     struct so_timestamping so_timestamping = {
