@@ -20,4 +20,4 @@ image::topology.drawio.svg[]
 
 The packet capture on the left shows that the timeTransmitter sent a zeroed timestamp to it's NIC while the packet capture on the right shows that the timeReceiver received a non-zero timestamp from its NIC.
 
-image::diff[]
+image::diff.png[]
