@@ -27,5 +27,8 @@ wait $rxpid
 # Pad tx packet so we don't get a diff due to padding
 sed -i -r "$ s/^.*$/& 0000/" txpkt
 if diff -U5 txpkt rxpkt; then
-    echo ERROR: Expected packets to differ but they are the same.  Packet was not timestamped.
+    echo FAILED: Packets match => packet was not timestamped
+else
+    echo PASSED: Packets differ => packet was timestamped
 fi
+
