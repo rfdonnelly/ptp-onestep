@@ -91,7 +91,7 @@ void enable_timestamping(int fd, const char *ifname) {
 
     struct hwtstamp_config hwtstamp_config = {
         .tx_type = HWTSTAMP_TX_ONESTEP_SYNC,
-        .rx_filter = HWTSTAMP_FILTER_NONE,
+        .rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT,
     };
 
     struct ifreq ifreq = {
