@@ -5,7 +5,7 @@
 [source,sh]
 ----
 make CROSS_COMPILE=arm-linux-gnueabihf-
-./run <timeTransmitter> <timeReceiver>
+./run <transmitter> <receiver>
 ----
 
 == Example
@@ -14,7 +14,7 @@ make CROSS_COMPILE=arm-linux-gnueabihf-
 ----
 $ make CROSS_COMPILE=arm-linux-gnueabihf-
 arm-linux-gnueabihf-gcc -static -o tx tx.c
-$ ./run hpscrpitsn0 hpscrpitsn1
+$ ./run tx rx
 txpkt
 PTPv18
         0x0000:  0180 c200 000e cacd 33e4 7891 88f7 1012
