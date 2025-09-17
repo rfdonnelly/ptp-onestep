@@ -17,10 +17,12 @@ for host in $hosts; do
     ssh $user@$host tcpdump -i $intf -w $host.pcap &
 done
 
+sleep 1
+
 ssh $user@$tt ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --serverOnly 1 --priority1 0 --priority2 0 &
 ssh $user@$tr ptp4l -f gPTP.cfg -i $intf --twoStepFlag 0 --BMCA noop --clientOnly 1 --step_threshold 1 &
 
-sleep 10
+sleep 5
 
 for host in $hosts; do
     ssh $user@$host killall ptp4l
