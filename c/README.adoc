@@ -38,4 +38,4 @@ PTPv18
 -       0x0030:  0000 0000 0000 0000 0000 0000
 +       0x0030:  0000 0002 ff2c 0664 3111 0000
 PASSED: Packets differ => packet was timestamped
----
+----
