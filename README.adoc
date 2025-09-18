@@ -12,7 +12,7 @@ Two scenarios are provided:
 
 == Topology
 
-A point to point link between two systems is used for both scenarios.
+A point-to-point link between two systems with NICs that support one-step timestamping is used for both scenarios.
 
 image::topology.drawio.svg[]
 
