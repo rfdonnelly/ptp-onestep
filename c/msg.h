@@ -18,7 +18,9 @@ typedef uint8_t   Octet;
 
 #define PACKED __attribute__((packed))
 
-typedef uint8_t mac_addr[6];
+struct mac_addr {
+    uint8_t octet[6];
+};
 #define ETHERTYPE_PTP 0x88f7
 
 struct Timestamp {
@@ -37,8 +39,8 @@ struct PortIdentity {
 } PACKED;
 
 struct eth_header {
-    mac_addr dst;
-    mac_addr src;
+    struct mac_addr dst;
+    struct mac_addr src;
     uint16_t ethertype;
 } PACKED;
 

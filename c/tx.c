@@ -20,12 +20,12 @@ int interface_index(int fd, const char* ifname) {
     return ifreq.ifr_ifindex;
 }
 
-void interface_mac_addr(int fd, const char* ifname, uint8_t* addr) {
+struct mac_addr interface_mac_addr(int fd, const char* ifname) {
     struct ifreq ifreq = {};
     strncpy(ifreq.ifr_name, ifname, strlen(ifname));
     int err = ioctl(fd, SIOCGIFHWADDR, &ifreq);
     assert(!err);
-    memcpy(addr, ifreq.ifr_hwaddr.sa_data, 6);
+    return *(struct mac_addr*)&ifreq.ifr_hwaddr.sa_data;
 }
 
 // Reference: linuxptp:raw.c
@@ -98,21 +98,11 @@ void print_buf(uint8_t* buf, size_t size) {
     printf("\n");
 }
 
-void send_sync(int fd, const char* ifname) {
-    mac_addr src;
-    interface_mac_addr(fd, ifname, (uint8_t*)&src);
-
-    struct ptp_sync_msg frame = {
+void create_sync(struct mac_addr src, struct ptp_sync_msg* frame) {
+    *frame = (struct ptp_sync_msg){
         .eth = {
             .dst = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e},
-            .src = {
-                src[0],
-                src[1],
-                src[2],
-                src[3],
-                src[4],
-                src[5],
-            },
+            .src = src,
             .ethertype = htons(ETHERTYPE_PTP),
         },
         .header = {
@@ -122,14 +112,14 @@ void send_sync(int fd, const char* ifname) {
             .messageLength = htons(44),
             .portIdentity = {
                 .clockIdentity = {
-                    src[0],
-                    src[1],
-                    src[2],
+                    src.octet[0],
+                    src.octet[1],
+                    src.octet[2],
                     0xff,
                     0xfe,
-                    src[3],
-                    src[4],
-                    src[5],
+                    src.octet[3],
+                    src.octet[4],
+                    src.octet[5],
                 },
                 .portNumber = htons(1),
             },
@@ -137,11 +127,6 @@ void send_sync(int fd, const char* ifname) {
             .logMessagePeriod = -3,
         },
     };
-
-    // printf("Sending frame:\n");
-    // print_buf((uint8_t*)&frame, sizeof(frame));
-
-    send(fd, &frame, sizeof(frame), 0);
 }
 
 int main() {
@@ -149,5 +134,11 @@ int main() {
     int fd = create_socket(ifname);
     enable_timestamping(fd, ifname);
 
-    send_sync(fd, ifname);
+    struct ptp_sync_msg buf;
+    struct mac_addr src_addr = interface_mac_addr(fd, ifname);
+    create_sync(src_addr, &buf);
+
+    print_buf((uint8_t*)&buf, sizeof(buf));
+
+    send(fd, &buf, sizeof(buf), 0);
 }
