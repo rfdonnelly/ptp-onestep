@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include "msg.h"
 
@@ -141,4 +142,6 @@ int main() {
     print_buf((uint8_t*)&buf, sizeof(buf));
 
     send(fd, &buf, sizeof(buf), 0);
+
+    close(fd);
 }
