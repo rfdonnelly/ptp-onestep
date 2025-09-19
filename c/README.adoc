@@ -4,7 +4,7 @@
 
 [source,sh]
 ----
-make CROSS_COMPILE=arm-linux-gnueabihf-
+make CROSS_COMPILE=arm-linux-gnueabihf- EXTRA_CFLAGS=-static
 ./run <transmitter> <receiver>
 ----
 
