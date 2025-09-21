@@ -34,6 +34,7 @@ echo "Received"
 cat rx
 echo
 
+echo "Diff"
 if wdiff -w- -x- -y+ -z+ tx <(grep -v rx_timestamp rx); then
     echo
     echo "FAILED: Packets match => packet was not timestamped"
