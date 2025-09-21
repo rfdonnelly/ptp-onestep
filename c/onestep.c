@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <assert.h>
+#include <errno.h>
 #include <net/if.h>
 #include <stdio.h>
 #include <string.h>
@@ -89,16 +90,65 @@ int main_tx(const char* ifname) {
     return 0;
 }
 
+int rx(int fd, void* buf, int buflen, struct timespec* timestamp) {
+    char msg_control[256] = { 0 };
+    struct iovec msg_iov = {
+        .iov_base = &buf,
+        .iov_len = buflen,
+    };
+    struct msghdr msg = {
+        .msg_iov = &msg_iov,
+        .msg_iovlen = 1,
+        .msg_control = msg_control,
+        .msg_controllen = sizeof(msg_control),
+    };
+
+    int cnt = recvmsg(fd, &msg, 0);
+    assert(cnt >= 0);
+
+    struct timespec* timespecs = NULL;
+    for (struct cmsghdr* cm = CMSG_FIRSTHDR(&msg); cm != NULL; cm = CMSG_NXTHDR(&msg, cm)) {
+        if (SOL_SOCKET == cm->cmsg_level && SO_TIMESTAMPING == cm->cmsg_type) {
+            if (cm->cmsg_len < sizeof(struct timespec) * 3) {
+                fprintf(stderr, "warning: short SO_TIMESTAMPING message\n");
+                return -EMSGSIZE;
+            }
+
+            timespecs = (struct timespec*)CMSG_DATA(cm);
+        } else {
+            fprintf(stderr, "warning: unexpected message type/level\n");
+        }
+    }
+
+    if (timespecs) {
+        *timestamp = timespecs[2];
+    }
+
+    if (cnt < 0) {
+        return -errno;
+    } else {
+        return cnt;
+    }
+}
+
 int main_rx(const char* ifname) {
     int fd = socket_create(ifname);
+    socket_enable_timestamping(fd, ifname);
 
     char buf[1500];
-    int cnt = recv(fd, buf, sizeof(buf), 0);
-    assert(cnt != 1);
+
+    struct timespec timestamp = { 0 };
+    int cnt = rx(fd, &buf, sizeof(buf), &timestamp);
+    if (cnt < 0) {
+        errno = cnt;
+        perror("error: receive failed");
+        return 1;
+    }
 
     print_buf((uint8_t*)&buf, cnt);
+    printf("timestamp sec:%ld nsec:%ld\n", timestamp.tv_sec, timestamp.tv_nsec);
 
-    return 0;
+    return cnt < 0;
 }
 
 void print_usage(const char* argv0) {
