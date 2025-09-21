@@ -7,6 +7,7 @@
 #include <net/if.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
@@ -23,7 +24,10 @@ int socket_create(const char* ifname) {
     int err;
 
     int fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_1588));
-    assert(fd);
+    if (fd == -1) {
+        perror("error: could not open raw socket on interface");
+        exit(1);
+    }
 
     int ifindex = interface_index(fd, ifname);
     assert(ifindex);
@@ -62,7 +66,7 @@ void socket_enable_timestamping(int fd, const char *ifname) {
     // printf("DEBUG fd:%d hwtstamp_config:{tx_type:0x%x rx_filter:0x%x}\n", fd, hwtstamp_config.tx_type, hwtstamp_config.rx_filter);
     err = ioctl(fd, SIOCSHWTSTAMP, &ifreq);
     if (err) {
-        fprintf(stderr, "error: failed to enable hardware timestamping via ioctl\n");
+        perror("error: failed to enable hardware timestamping via ioctl");
         return;
     }
 
@@ -73,7 +77,7 @@ void socket_enable_timestamping(int fd, const char *ifname) {
     };
     err = setsockopt(fd, SOL_SOCKET, SO_TIMESTAMPING, &so_timestamping, sizeof(so_timestamping));
     if (err) {
-        fprintf(stderr, "error: failed to enable hardware timestamping via setsockopt\n");
+        perror("error: failed to enable hardware timestamping via setsockopt");
         return;
     }
 
