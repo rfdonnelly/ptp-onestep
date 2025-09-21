@@ -93,7 +93,7 @@ int main_tx(const char* ifname) {
 int rx(int fd, void* buf, int buflen, struct timespec* timestamp) {
     char msg_control[256] = { 0 };
     struct iovec msg_iov = {
-        .iov_base = &buf,
+        .iov_base = buf,
         .iov_len = buflen,
     };
     struct msghdr msg = {
@@ -135,7 +135,7 @@ int main_rx(const char* ifname) {
     int fd = socket_create(ifname);
     socket_enable_timestamping(fd, ifname);
 
-    char buf[1500];
+    char buf[1500] = { 0 };
 
     struct timespec timestamp = { 0 };
     int cnt = rx(fd, &buf, sizeof(buf), &timestamp);
