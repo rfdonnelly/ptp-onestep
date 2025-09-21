@@ -21,15 +21,10 @@ void print_buf(uint8_t* buf, size_t size) {
     printf("\n");
 }
 
-void create_sync(struct mac_addr src, struct ptp_sync_msg* frame) {
+struct ptp_sync_msg create_sync_msg(struct mac_addr src) {
     // WORKAROUND: GCC -Wmissing-braces has trouble with this compound literal
     #pragma GCC diagnostic ignored "-Wmissing-braces"
-    *frame = (struct ptp_sync_msg){
-        .eth = {
-            .dst = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e},
-            .src = src,
-            .ethertype = htons(ETHERTYPE_PTP),
-        },
+    return (struct ptp_sync_msg){
         .header = {
             .majorSdoId = 1,
             .minorVersionPtp = 1,
@@ -52,6 +47,21 @@ void create_sync(struct mac_addr src, struct ptp_sync_msg* frame) {
             .logMessagePeriod = -3,
         },
     };
+    #pragma GCC diagnostic pop
+}
+
+struct eth_ptp_msg create_eth_frame(struct mac_addr src, struct ptp_sync_msg ptp) {
+    // WORKAROUND: GCC -Wmissing-braces has trouble with this compound literal
+    #pragma GCC diagnostic ignored "-Wmissing-braces"
+    return (struct eth_ptp_msg){
+        .eth = {
+            .dst = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e},
+            .src = src,
+            .ethertype = htons(ETHERTYPE_PTP),
+        },
+        .ptp = ptp,
+    };
+    #pragma GCC diagnostic pop
 }
 
 struct mac_addr interface_mac_addr(int fd, const char* ifname) {
@@ -67,9 +77,9 @@ int main() {
     int fd = socket_create(ifname);
     socket_enable_timestamping(fd, ifname);
 
-    struct ptp_sync_msg buf;
     struct mac_addr src_addr = interface_mac_addr(fd, ifname);
-    create_sync(src_addr, &buf);
+    struct ptp_sync_msg msg = create_sync_msg(src_addr);
+    struct eth_ptp_msg buf = create_eth_frame(src_addr, msg);
 
     print_buf((uint8_t*)&buf, sizeof(buf));
 

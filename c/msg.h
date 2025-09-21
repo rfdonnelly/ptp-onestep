@@ -72,9 +72,13 @@ struct ptp_header {
 } PACKED;
 
 struct ptp_sync_msg {
-    struct eth_header eth;
     struct ptp_header header;
     struct Timestamp originTimeStamp;
+} PACKED;
+
+struct eth_ptp_msg {
+    struct eth_header eth;
+    struct ptp_sync_msg ptp;
 } PACKED;
 
 #endif // __MSG_H__
