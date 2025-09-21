@@ -4,7 +4,7 @@
 
 [source,sh]
 ----
-make CROSS_COMPILE=arm-linux-gnueabihf- EXTRA_CFLAGS=-static
+make CROSS_COMPILE=aarch64-linux-gnu- EXTRA_CFLAGS=-static
 ./run <transmitter> <receiver>
 ----
 
@@ -12,8 +12,8 @@ make CROSS_COMPILE=arm-linux-gnueabihf- EXTRA_CFLAGS=-static
 
 [source,console]
 ----
-$ make CROSS_COMPILE=arm-linux-gnueabihf-
-arm-linux-gnueabihf-gcc -static -o tx tx.c
+$ make CROSS_COMPILE=aarch64-linux-gnu-
+aarch64-linux-gnu-gcc -static -o tx tx.c
 $ ./run tx rx
 txpkt
 PTPv18
