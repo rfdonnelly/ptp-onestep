@@ -30,7 +30,7 @@ struct ptp_sync_msg create_sync_msg(struct mac_addr src) {
             .majorSdoId = 1,
             .minorVersionPtp = 1,
             .versionPtp = 2,
-            .messageLength = htons(44),
+            .messageLength = 44,
             .portIdentity = {
                 .clockIdentity = {
                     src.octet[0],
@@ -42,9 +42,9 @@ struct ptp_sync_msg create_sync_msg(struct mac_addr src) {
                     src.octet[4],
                     src.octet[5],
                 },
-                .portNumber = htons(1),
+                .portNumber = 1,
             },
-            .sequenceId = htons(23),
+            .sequenceId = 23,
             .logMessagePeriod = -3,
         },
     };
@@ -79,9 +79,11 @@ int main_tx(const char* ifname) {
 
     struct mac_addr src_addr = interface_mac_addr(fd, ifname);
     struct ptp_sync_msg msg = create_sync_msg(src_addr);
+    print_ptp_sync_msg(&msg);
+    hton_ptp_sync_msg(&msg);
     struct eth_ptp_msg buf = create_eth_frame(src_addr, msg);
 
-    print_buf((uint8_t*)&buf, sizeof(buf));
+    // print_buf((uint8_t*)&buf, sizeof(buf));
 
     send(fd, &buf, sizeof(buf), 0);
 
@@ -145,8 +147,11 @@ int main_rx(const char* ifname) {
         return 1;
     }
 
-    print_buf((uint8_t*)&buf, cnt);
-    printf("timestamp sec:%ld nsec:%ld\n", timestamp.tv_sec, timestamp.tv_nsec);
+    // print_buf((uint8_t*)&buf, cnt);
+    struct eth_ptp_msg* eth_frame = (struct eth_ptp_msg*)buf;
+    ntoh_ptp_sync_msg(&eth_frame->ptp);
+    print_ptp_sync_msg(&eth_frame->ptp);
+    printf("rx_timestamp: {sec:%ld nsec:%ld}\n", timestamp.tv_sec, timestamp.tv_nsec);
 
     return cnt < 0;
 }

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 tx=$1
 rx=$2
@@ -6,35 +6,38 @@ hosts="$tx $rx"
 user=root
 intf=eth1
 
-scp -q -O onestep $user@$tx:
-
 for host in $hosts; do
     ssh $user@$host killall tcpdump >/dev/null 2>&1
+    ssh $user@$host killall onestep >/dev/null 2>&1
+    scp -q -O onestep $user@$host:
 done
 
-ssh $user@$tx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >txpkt &
-txpid=$!
-ssh $user@$rx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >rxpkt &
-rxpid=$!
+# ssh $user@$tx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >txpkt &
+# txpid=$!
+# ssh $user@$rx tcpdump -i $intf -t -c1 -xx ether proto 0x88f7 2>/dev/null >rxpkt &
+# rxpid=$!
 
 sleep 1
 
-ssh $user@$tx /root/onestep tx eth1
+ssh $user@$rx /root/onestep rx eth1 >rx &
+sleep 1
+ssh $user@$tx /root/onestep tx eth1 >tx
 
-wait $txpid
-wait $rxpid
+# wait $txpid
+# wait $rxpid
 
-echo txpkt
-cat txpkt
+echo "Transmitted"
+cat tx
+echo
 
-echo rxpkt
-cat rxpkt
+echo "Received"
+cat rx
+echo
 
-# Pad tx packet so we don't get a diff due to padding
-sed -i -r "$ s/^.*$/& 0000/" txpkt
-if diff -U5 txpkt rxpkt; then
+if wdiff -w- -x- -y+ -z+ tx <(grep -v rx_timestamp rx); then
+    echo
     echo "FAILED: Packets match => packet was not timestamped"
 else
+    echo
     echo "PASSED: Packets differ => packet was timestamped"
 fi
-
