@@ -6,6 +6,7 @@
 #include <linux/sockios.h>
 #include <net/if.h>
 #include <string.h>
+#include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
@@ -60,7 +61,10 @@ void socket_enable_timestamping(int fd, const char *ifname) {
 
     // printf("DEBUG fd:%d hwtstamp_config:{tx_type:0x%x rx_filter:0x%x}\n", fd, hwtstamp_config.tx_type, hwtstamp_config.rx_filter);
     err = ioctl(fd, SIOCSHWTSTAMP, &ifreq);
-    assert(!err);
+    if (err) {
+        fprintf(stderr, "error: failed to enable hardware timestamping via ioctl\n");
+        return;
+    }
 
     struct so_timestamping so_timestamping = {
         .flags =
@@ -68,7 +72,10 @@ void socket_enable_timestamping(int fd, const char *ifname) {
             SOF_TIMESTAMPING_RAW_HARDWARE,
     };
     err = setsockopt(fd, SOL_SOCKET, SO_TIMESTAMPING, &so_timestamping, sizeof(so_timestamping));
-    assert(!err);
+    if (err) {
+        fprintf(stderr, "error: failed to enable hardware timestamping via setsockopt\n");
+        return;
+    }
 
     int value = 1;
     err = setsockopt(fd, SOL_SOCKET, SO_SELECT_ERR_QUEUE, &value, sizeof(value));
