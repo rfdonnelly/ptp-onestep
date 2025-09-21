@@ -5,7 +5,7 @@ SRC=$(wildcard *.c)
 OBJ=$(SRC:%.c=%.o)
 DEP=$(OBJ:%.o=%.d)
 
-EXE=tx
+EXE=onestep
 LIBS=$(addprefix -l,)
 
 TARGET=/usr/local

@@ -6,7 +6,7 @@ hosts="$tx $rx"
 user=root
 intf=eth1
 
-scp -q -O tx $user@$tx:
+scp -q -O onestep $user@$tx:
 
 for host in $hosts; do
     ssh $user@$host killall tcpdump >/dev/null 2>&1
@@ -19,7 +19,7 @@ rxpid=$!
 
 sleep 1
 
-ssh $user@$tx /root/tx
+ssh $user@$tx /root/onestep tx eth1
 
 wait $txpid
 wait $rxpid

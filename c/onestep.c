@@ -72,8 +72,7 @@ struct mac_addr interface_mac_addr(int fd, const char* ifname) {
     return *(struct mac_addr*)&ifreq.ifr_hwaddr.sa_data;
 }
 
-int main() {
-    const char* ifname = "eth1";
+int main_tx(const char* ifname) {
     int fd = socket_create(ifname);
     socket_enable_timestamping(fd, ifname);
 
@@ -86,4 +85,41 @@ int main() {
     send(fd, &buf, sizeof(buf), 0);
 
     close(fd);
+
+    return 0;
+}
+
+int main_rx(const char* ifname) {
+    int fd = socket_create(ifname);
+
+    char buf[1500];
+    int cnt = recv(fd, buf, sizeof(buf), 0);
+    assert(cnt != 1);
+
+    print_buf((uint8_t*)&buf, cnt);
+
+    return 0;
+}
+
+void print_usage(const char* argv0) {
+    printf("usage: %s <tx|rx> <interface>\n", argv0);
+}
+
+int main(int argc, char *argv[]) {
+    const char* cmd = argv[1];
+    const char* ifname = argv[2];
+
+    if (argc != 3) {
+        print_usage(argv[0]);
+        return 1;
+    }
+
+    if (!strcmp(cmd, "tx")) {
+        return main_tx(ifname);
+    } else if (!strcmp(cmd, "rx")) {
+        return main_rx(ifname);
+    } else {
+        print_usage(argv[0]);
+        return 1;
+    }
 }
