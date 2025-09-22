@@ -31,19 +31,20 @@ Transmitted
 ptp_msg: header: messageType:0x0 majorSdoId:0x1 versionPtp:0x2 minorVersionPtp:0x1 messageLength:0x2c domainNumber:0x0 minorSdoId:0x0 flags:0x00 correctionField:0 messageTypeSpecific:0x0 clockIdentity:0xcacd33fffee47891 portNumber:0x1 sequenceId:23 controlField:0x0 logMessagePeriod:-3 originTimeStamp: secs:0 nsecs:0
 
 Received
-ptp_msg: header: messageType:0x0 majorSdoId:0x1 versionPtp:0x2 minorVersionPtp:0x1 messageLength:0x2c domainNumber:0x0 minorSdoId:0x0 flags:0x00 correctionField:44594432 messageTypeSpecific:0x0 clockIdentity:0xcacd33fffee47891 portNumber:0x1 sequenceId:23 controlField:0x0 logMessagePeriod:-3 originTimeStamp: secs:698681 nsecs:144891028
+ptp_msg: header: messageType:0x0 majorSdoId:0x1 versionPtp:0x2 minorVersionPtp:0x1 messageLength:0x2c domainNumber:0x0 minorSdoId:0x0 flags:0x00 correctionField:44259072 messageTypeSpecific:0x0 clockIdentity:0xcacd33fffee47891 portNumber:0x1 sequenceId:23 controlField:0x0 logMessagePeriod:-3 originTimeStamp: secs:698872 nsecs:681548778
+rx_timestamp: sec: 698873 nsec: 304866571
 
 Diff
 --- tx
 +++ rx
 @@ -11 +11 @@
 -    correctionField:0
-+    correctionField:44594432
++    correctionField:44259072
 @@ -19,2 +19,2 @@
 -    secs:0
 -    nsecs:0
-+    secs:698681
-+    nsecs:144891028
++    secs:698872
++    nsecs:681548778
 
 PASSED: Packet was timestamped
 ----
