@@ -18,14 +18,22 @@ aarch64-linux-gnu-gcc -MMD -Wall -Wextra -static -g -c -o socket.o socket.c
 aarch64-linux-gnu-gcc -o onestep onestep.o socket.o
 $ ./run tx rx
 Transmitted
-ptp_msg: { header: { messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 0 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 } originTimeStamp: { secs: 0 nsecs: 0 } }
+ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 0 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 0 nsecs: 0
 
 Received
-ptp_msg: { header: { messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 44563968 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 } originTimeStamp: { secs: 606649 nsecs: 331457658 } }
-rx_timestamp: {sec:606649 nsec:862675568}
+ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 44261376 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 627288 nsecs: 793867892 rx_timestamp: {sec:627289 nsec:345273182}
 
 Diff
-ptp_msg: { header: { messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: -0- +44563968+ messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 } originTimeStamp: { secs: -0- +606649+ nsecs: -0- +331457658+ } }
+--- tx
++++ rx
+@@ -11 +11 @@
+-    correctionField: 0
++    correctionField: 44261376
+@@ -19,2 +19,2 @@
+-    secs: 0
+-    nsecs: 0
++    secs: 627288
++    nsecs: 793867892
 
-PASSED: Packets differ => packet was timestamped
+PASSED: Packet was timestamped
 ----
