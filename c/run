@@ -31,21 +31,24 @@ cat tx | sed -E 's/^\s+//g' | tr '\n' ' '
 echo
 echo
 
+rx=$(grep -v rx_timestamp rx)
+rx_timestamp=$(grep rx_timestamp rx)
+
 echo "Received"
-cat rx | sed -E 's/^\s+//g' | tr '\n' ' '
+echo "$rx" | sed -E 's/^\s+//g' | tr '\n' ' '
 echo
 echo
 
 echo "Diff"
-diff -U0 --label tx --label rx tx <(grep -v rx_timestamp rx) > diff
+diff -U0 --label tx --label rx tx <(echo "$rx") > diff
 cat diff
 echo
 
 if \
     test 10 = $(cat diff | wc -l) \
-    && grep "\-    correctionField: 0" diff >/dev/null \
-    && grep "\-    secs: 0" diff >/dev/null \
-    && grep "\-    nsecs: 0" diff >/dev/null \
+    && grep "\-    correctionField:0" diff >/dev/null \
+    && grep "\-    secs:0" diff >/dev/null \
+    && grep "\-    nsecs:0" diff >/dev/null \
 ; then
     echo "PASSED: Packet was timestamped"
 else

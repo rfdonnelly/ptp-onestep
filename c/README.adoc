@@ -1,40 +1,49 @@
 = One-step Timestamping with Linux C APIs
 
-== Invocation
+== Dependencies
+
+Install the ARM 64 toolchain.
+
+[source,sh]
+----
+sudo apt install gcc-aarch64-linux-gnu
+----
+
+== Build
 
 [source,sh]
 ----
 make CROSS_COMPILE=aarch64-linux-gnu- EXTRA_CFLAGS=-static
+----
+
+== Run
+
+[source,sh]
+----
 ./run <transmitter> <receiver>
 ----
 
-== Example
-
 [source,console]
+.Example
 ----
-$ make CROSS_COMPILE=aarch64-linux-gnu- EXTRA_CFLAGS=-static
-aarch64-linux-gnu-gcc -MMD -Wall -Wextra -static -g -c -o onestep.o onestep.c
-aarch64-linux-gnu-gcc -MMD -Wall -Wextra -static -g -c -o socket.o socket.c
-aarch64-linux-gnu-gcc -o onestep onestep.o socket.o
 $ ./run tx rx
 Transmitted
-ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 0 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 0 nsecs: 0
+ptp_msg: header: messageType:0x0 majorSdoId:0x1 versionPtp:0x2 minorVersionPtp:0x1 messageLength:0x2c domainNumber:0x0 minorSdoId:0x0 flags:0x00 correctionField:0 messageTypeSpecific:0x0 clockIdentity:0xcacd33fffee47891 portNumber:0x1 sequenceId:23 controlField:0x0 logMessagePeriod:-3 originTimeStamp: secs:0 nsecs:0
 
 Received
-ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 44261376 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 627288 nsecs: 793867892
-rx_timestamp: sec:627289 nsec:345273182
+ptp_msg: header: messageType:0x0 majorSdoId:0x1 versionPtp:0x2 minorVersionPtp:0x1 messageLength:0x2c domainNumber:0x0 minorSdoId:0x0 flags:0x00 correctionField:44594432 messageTypeSpecific:0x0 clockIdentity:0xcacd33fffee47891 portNumber:0x1 sequenceId:23 controlField:0x0 logMessagePeriod:-3 originTimeStamp: secs:698681 nsecs:144891028
 
 Diff
 --- tx
 +++ rx
 @@ -11 +11 @@
--    correctionField: 0
-+    correctionField: 44261376
+-    correctionField:0
++    correctionField:44594432
 @@ -19,2 +19,2 @@
--    secs: 0
--    nsecs: 0
-+    secs: 627288
-+    nsecs: 793867892
+-    secs:0
+-    nsecs:0
++    secs:698681
++    nsecs:144891028
 
 PASSED: Packet was timestamped
 ----

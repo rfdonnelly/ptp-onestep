@@ -137,28 +137,28 @@ void print_ptp_header(const char* prefix, struct ptp_header* hdr) {
         | (uint64_t)hdr->portIdentity.clockIdentity.id[1] << 48
         | (uint64_t)hdr->portIdentity.clockIdentity.id[0] << 56;
     printf("%sheader:\n", prefix);
-    printf("%s  messageType: 0x%x\n", prefix,hdr->messageType);
-    printf("%s  majorSdoId: 0x%x\n", prefix, hdr->majorSdoId);
-    printf("%s  versionPtp: 0x%x\n", prefix, hdr->versionPtp);
-    printf("%s  minorVersionPtp: 0x%x\n", prefix, hdr->minorVersionPtp);
-    printf("%s  messageLength: 0x%0x\n", prefix, hdr->messageLength);
-    printf("%s  domainNumber: 0x%0x\n", prefix, hdr->domainNumber);
-    printf("%s  minorSdoId: 0x%x\n", prefix, hdr->minorSdoId);
-    printf("%s  flags: 0x%0x%0x\n", prefix, hdr->flags[1], hdr->flags[0]);
-    printf("%s  correctionField: %ld\n", prefix, hdr->correctionField);
-    printf("%s  messageTypeSpecific: 0x%0x\n", prefix, hdr->messageTypeSpecific);
-    printf("%s  clockIdentity: 0x%0lx\n", prefix, clockIdentity);
-    printf("%s  portNumber: 0x%0x\n", prefix, hdr->portIdentity.portNumber);
-    printf("%s  sequenceId: %d\n", prefix, hdr->sequenceId);
-    printf("%s  controlField: 0x%0x\n", prefix, hdr->controlField);
-    printf("%s  logMessagePeriod: %d\n", prefix, hdr->logMessagePeriod);
+    printf("%s  messageType:0x%x\n", prefix,hdr->messageType);
+    printf("%s  majorSdoId:0x%x\n", prefix, hdr->majorSdoId);
+    printf("%s  versionPtp:0x%x\n", prefix, hdr->versionPtp);
+    printf("%s  minorVersionPtp:0x%x\n", prefix, hdr->minorVersionPtp);
+    printf("%s  messageLength:0x%0x\n", prefix, hdr->messageLength);
+    printf("%s  domainNumber:0x%0x\n", prefix, hdr->domainNumber);
+    printf("%s  minorSdoId:0x%x\n", prefix, hdr->minorSdoId);
+    printf("%s  flags:0x%0x%0x\n", prefix, hdr->flags[1], hdr->flags[0]);
+    printf("%s  correctionField:%ld\n", prefix, hdr->correctionField);
+    printf("%s  messageTypeSpecific:0x%0x\n", prefix, hdr->messageTypeSpecific);
+    printf("%s  clockIdentity:0x%0lx\n", prefix, clockIdentity);
+    printf("%s  portNumber:0x%0x\n", prefix, hdr->portIdentity.portNumber);
+    printf("%s  sequenceId:%d\n", prefix, hdr->sequenceId);
+    printf("%s  controlField:0x%0x\n", prefix, hdr->controlField);
+    printf("%s  logMessagePeriod:%d\n", prefix, hdr->logMessagePeriod);
 }
 
 void print_timestamp(const char* prefix, struct Timestamp* ts) {
     uint64_t secs = (uint64_t)ts->seconds_msb << 32 | ts->seconds_lsb;
     printf("%soriginTimeStamp:\n", prefix);
-    printf("%s  secs: %ld\n", prefix, secs);
-    printf("%s  nsecs: %d\n", prefix, ts->nanoseconds);
+    printf("%s  secs:%ld\n", prefix, secs);
+    printf("%s  nsecs:%d\n", prefix, ts->nanoseconds);
 }
 
 void print_ptp_sync_msg(struct ptp_sync_msg* msg) {

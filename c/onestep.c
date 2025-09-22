@@ -151,7 +151,7 @@ int main_rx(const char* ifname) {
     struct eth_ptp_msg* eth_frame = (struct eth_ptp_msg*)buf;
     ntoh_ptp_sync_msg(&eth_frame->ptp);
     print_ptp_sync_msg(&eth_frame->ptp);
-    printf("rx_timestamp: {sec:%ld nsec:%ld}\n", timestamp.tv_sec, timestamp.tv_nsec);
+    printf("rx_timestamp: sec: %ld nsec: %ld\n", timestamp.tv_sec, timestamp.tv_nsec);
 
     return cnt < 0;
 }
