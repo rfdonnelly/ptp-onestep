@@ -21,7 +21,8 @@ Transmitted
 ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 0 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 0 nsecs: 0
 
 Received
-ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 44261376 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 627288 nsecs: 793867892 rx_timestamp: {sec:627289 nsec:345273182}
+ptp_msg: header: messageType: 0x0 majorSdoId: 0x1 versionPtp: 0x2 minorVersionPtp: 0x1 messageLength: 0x2c domainNumber: 0x0 minorSdoId: 0x0 flags: 0x00 correctionField: 44261376 messageTypeSpecific: 0x0 clockIdentity: 0xcacd33fffee47891 portNumber: 0x1 sequenceId: 23 controlField: 0x0 logMessagePeriod: -3 originTimeStamp: secs: 627288 nsecs: 793867892
+rx_timestamp: {sec:627289 nsec:345273182}
 
 Diff
 --- tx
