@@ -27,18 +27,27 @@ ssh $user@$tx /root/onestep tx eth1 >tx
 # wait $rxpid
 
 echo "Transmitted"
-cat tx
+cat tx | sed -E 's/^\s+//g' | tr '\n' ' '
+echo
 echo
 
 echo "Received"
-cat rx
+cat rx | sed -E 's/^\s+//g' | tr '\n' ' '
+echo
 echo
 
 echo "Diff"
-if wdiff -w- -x- -y+ -z+ tx <(grep -v rx_timestamp rx); then
-    echo
-    echo "FAILED: Packets match => packet was not timestamped"
+diff -U0 --label tx --label rx tx <(grep -v rx_timestamp rx) > diff
+cat diff
+echo
+
+if \
+    test 10 = $(cat diff | wc -l) \
+    && grep "\-    correctionField: 0" diff >/dev/null \
+    && grep "\-    secs: 0" diff >/dev/null \
+    && grep "\-    nsecs: 0" diff >/dev/null \
+; then
+    echo "PASSED: Packet was timestamped"
 else
-    echo
-    echo "PASSED: Packets differ => packet was timestamped"
+    echo "FAILED: Packets was not timestamped"
 fi
