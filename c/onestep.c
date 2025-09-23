@@ -142,7 +142,7 @@ int main_rx(const char* ifname) {
     struct timespec timestamp = { 0 };
     int cnt = rx(fd, &buf, sizeof(buf), &timestamp);
     if (cnt < 0) {
-        errno = cnt;
+        errno = -cnt;
         perror("error: receive failed");
         return 1;
     }
