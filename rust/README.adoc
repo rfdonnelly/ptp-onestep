@@ -1,0 +1,24 @@
+= One-step Timestamping in Rust
+
+== Dependencies
+
+Install the ARM 64 toolchain.
+
+[source,sh]
+----
+rustup target add aarch64-unknown-linux-gnu
+----
+
+== Build
+
+[source,sh]
+----
+cargo build --target=aarch64-unknown-linux-gnu
+----
+
+== Run
+
+[source,sh]
+----
+./run <tx> <rx>
+----

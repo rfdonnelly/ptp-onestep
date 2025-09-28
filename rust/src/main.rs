@@ -3,7 +3,7 @@ use pnet::packet::ethernet::{EtherTypes, EthernetPacket, MutableEthernetPacket};
 use pnet::util::MacAddr;
 
 use onestep::packet::ptp::{ClockIdentity, MutablePtpPacket, PortIdentity, PtpPacket, SyncPacket};
-use onestep::socket::socket_from_ifname;
+use onestep::socket;
 
 const PKT_ETH_SIZE: usize = EthernetPacket::minimum_packet_size();
 const PKT_PTP_HDR_SIZE: usize = PtpPacket::minimum_packet_size();
@@ -12,13 +12,15 @@ const PKT_PTP_SYNC_SIZE: usize = SyncPacket::minimum_packet_size();
 const PKT_PTP_HDR_OFFSET: usize = PKT_ETH_SIZE;
 
 fn main() -> Result<(), ()> {
+    let ifname = "eth1";
     let mut buf = [0u8; PKT_ETH_SIZE + PKT_PTP_HDR_SIZE + PKT_PTP_SYNC_SIZE];
-    let interface = get_interface("eth3")?;
+    let interface = get_interface(ifname)?;
     let source_addr = interface.mac.ok_or(())?;
     create_sync_msg(source_addr, &mut buf)?;
     print_buf(&buf);
-    let socket = socket_from_ifname("eth3")?;
-    socket.send(&buf);
+    let socket = socket::from_ifname(ifname)?;
+    socket::enable_timestamping(&socket, ifname)?;
+    socket.send(&buf).map_err(|_| ())?;
 
     Ok(())
 }
