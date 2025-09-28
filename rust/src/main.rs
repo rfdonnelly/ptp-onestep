@@ -17,7 +17,7 @@ fn main() -> Result<(), ()> {
     let interface = get_interface(ifname)?;
     let source_addr = interface.mac.ok_or(())?;
     create_sync_msg(source_addr, &mut buf)?;
-    print_buf(&buf);
+    // print_buf(&buf);
     let socket = socket::from_ifname(ifname)?;
     socket::enable_timestamping(&socket, ifname)?;
     socket.send(&buf).map_err(|_| ())?;
