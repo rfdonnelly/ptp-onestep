@@ -110,7 +110,7 @@ int rx(int fd, void* buf, int buflen, struct timespec* timestamp) {
 
     struct timespec* timespecs = NULL;
     for (struct cmsghdr* cm = CMSG_FIRSTHDR(&msg); cm != NULL; cm = CMSG_NXTHDR(&msg, cm)) {
-        if (SOL_SOCKET == cm->cmsg_level && SO_TIMESTAMPING == cm->cmsg_type) {
+        if (SOL_SOCKET == cm->cmsg_level && SCM_TIMESTAMPING == cm->cmsg_type) {
             if (cm->cmsg_len < sizeof(struct timespec) * 3) {
                 fprintf(stderr, "warning: short SO_TIMESTAMPING message\n");
                 return -EMSGSIZE;
