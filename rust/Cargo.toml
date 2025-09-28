@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+nix = { version = "0.30.1", features = ["ioctl", "net", "socket", "time", "uio"] }
 pnet = "0.35.0"
 pnet_macros = "0.35.0"
 pnet_macros_support = "0.35.0"
 pnet_packet = "0.35.0"
+socket2 = "0.6.0"
