@@ -50,14 +50,13 @@ int socket_create(const char* ifname) {
 void socket_enable_timestamping(int fd, const char *ifname) {
     int err = 0;
 
-    // NOTE: Driver seems to require an RX filter even though we aren't
-    // interested in RX here.  Without an RX filter, the ioctl call
-    // returns an error.
+    // NOTE: Driver seems to require an RX filter even if we are only
+    // interested in TX.  Without an RX filter, the ioctl call returns an
+    // error.
     struct hwtstamp_config hwtstamp_config = {
         .tx_type = HWTSTAMP_TX_ONESTEP_SYNC,
         .rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT,
     };
-
     struct ifreq ifreq = {
         .ifr_data = (void*)&hwtstamp_config,
     };
@@ -72,8 +71,9 @@ void socket_enable_timestamping(int fd, const char *ifname) {
 
     struct so_timestamping so_timestamping = {
         .flags =
-            SOF_TIMESTAMPING_TX_HARDWARE |
-            SOF_TIMESTAMPING_RAW_HARDWARE,
+            SOF_TIMESTAMPING_RAW_HARDWARE |
+            SOF_TIMESTAMPING_RX_HARDWARE |
+            SOF_TIMESTAMPING_TX_HARDWARE,
     };
     err = setsockopt(fd, SOL_SOCKET, SO_TIMESTAMPING, &so_timestamping, sizeof(so_timestamping));
     if (err) {
