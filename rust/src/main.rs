@@ -5,23 +5,14 @@ use pnet::util::MacAddr;
 use onestep::packet::ptp::{ClockIdentity, MutablePtpPacket, PortIdentity, PtpPacket, SyncPacket};
 use onestep::socket;
 
+mod options;
+use options::{Command, parse_args};
+
 const PKT_ETH_SIZE: usize = EthernetPacket::minimum_packet_size();
 const PKT_PTP_HDR_SIZE: usize = PtpPacket::minimum_packet_size();
 const PKT_PTP_SYNC_SIZE: usize = SyncPacket::minimum_packet_size();
 
 const PKT_PTP_HDR_OFFSET: usize = PKT_ETH_SIZE;
-
-#[derive(Debug)]
-enum Command {
-    Rx,
-    Tx,
-}
-
-#[derive(Debug)]
-struct Options {
-    command: Command,
-    ifname: String,
-}
 
 #[derive(Debug)]
 struct Error(String);
@@ -64,24 +55,6 @@ fn main() -> Result<()> {
     }
 
     Ok(())
-}
-
-fn parse_args() -> Result<Options> {
-    let mut command = None;
-    let mut ifname = None;
-
-    for arg in std::env::args().skip(1) {
-        match arg.as_str() {
-            "rx" => command = Some(Command::Rx),
-            "tx" => command = Some(Command::Tx),
-            _ => ifname = Some(arg.clone()),
-        }
-    }
-
-    Ok(Options {
-        command: command.ok_or_else(|| Error("missing command option".to_string()))?,
-        ifname: ifname.ok_or_else(|| Error("missing ifname option".to_string()))?,
-    })
 }
 
 fn print_buf(buf: &[u8]) {
