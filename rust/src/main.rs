@@ -11,18 +11,77 @@ const PKT_PTP_SYNC_SIZE: usize = SyncPacket::minimum_packet_size();
 
 const PKT_PTP_HDR_OFFSET: usize = PKT_ETH_SIZE;
 
-fn main() -> Result<(), ()> {
-    let ifname = "eth1";
+#[derive(Debug)]
+enum Command {
+    Rx,
+    Tx,
+}
+
+#[derive(Debug)]
+struct Options {
+    command: Command,
+    ifname: String,
+}
+
+#[derive(Debug)]
+struct Error(String);
+impl From<()> for Error {
+    fn from(_: ()) -> Self {
+        Self("undefined error".to_string())
+    }
+}
+
+type Result<T> = std::result::Result<T, Error>;
+
+fn main() -> Result<()> {
+    let opts = parse_args()?;
+
     let mut buf = [0u8; PKT_ETH_SIZE + PKT_PTP_HDR_SIZE + PKT_PTP_SYNC_SIZE];
-    let interface = get_interface(ifname)?;
-    let source_addr = interface.mac.ok_or(())?;
+    let interface = get_interface(&opts.ifname)?;
+    let source_addr = interface.mac.ok_or_else(|| {
+        Error(format!(
+            "could not get MAC address for interface {}",
+            opts.ifname
+        ))
+    })?;
     create_sync_msg(source_addr, &mut buf)?;
     // print_buf(&buf);
-    let socket = socket::from_ifname(ifname)?;
-    socket::enable_timestamping(&socket, ifname)?;
-    socket.send(&buf).map_err(|_| ())?;
+    let socket = socket::from_ifname(&opts.ifname).map_err(|_| {
+        Error(format!(
+            "could not create raw socket on interface {}",
+            opts.ifname
+        ))
+    })?;
+    socket::enable_timestamping(&socket, &opts.ifname).ok();
+
+    match opts.command {
+        Command::Rx => {}
+        Command::Tx => {
+            socket
+                .send(&buf)
+                .map_err(|_| Error("send() failed".to_string()))?;
+        }
+    }
 
     Ok(())
+}
+
+fn parse_args() -> Result<Options> {
+    let mut command = None;
+    let mut ifname = None;
+
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "rx" => command = Some(Command::Rx),
+            "tx" => command = Some(Command::Tx),
+            _ => ifname = Some(arg.clone()),
+        }
+    }
+
+    Ok(Options {
+        command: command.ok_or_else(|| Error("missing command option".to_string()))?,
+        ifname: ifname.ok_or_else(|| Error("missing ifname option".to_string()))?,
+    })
 }
 
 fn print_buf(buf: &[u8]) {
@@ -37,16 +96,16 @@ fn print_buf(buf: &[u8]) {
     println!();
 }
 
-fn get_interface(ifname: &str) -> Result<NetworkInterface, ()> {
+fn get_interface(ifname: &str) -> Result<NetworkInterface> {
     let interfaces = pnet::datalink::interfaces();
 
     interfaces
         .into_iter()
         .find(|iface| iface.name == ifname)
-        .ok_or(())
+        .ok_or_else(|| Error(format!("could not find interface '{ifname}'")))
 }
 
-fn create_sync_msg(source_addr: MacAddr, buf: &mut [u8]) -> Result<(), ()> {
+fn create_sync_msg(source_addr: MacAddr, buf: &mut [u8]) -> Result<()> {
     {
         let mut eth = MutableEthernetPacket::new(buf).ok_or(())?;
         eth.set_destination(MacAddr::new(0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e));

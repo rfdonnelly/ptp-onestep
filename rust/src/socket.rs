@@ -53,7 +53,11 @@ pub fn enable_timestamping(socket: &Socket, ifname: &str) -> Result<(), ()> {
         rx_filter: libc::HWTSTAMP_FILTER_PTP_V2_L2_EVENT as _,
     };
     let mut ifr_name = [0; 16];
-    ifname.bytes().take(16 - 1).enumerate().for_each(|(i, b)| ifr_name[i] = b as _);
+    ifname
+        .bytes()
+        .take(16 - 1)
+        .enumerate()
+        .for_each(|(i, b)| ifr_name[i] = b as _);
     let mut ifreq = libc::ifreq {
         ifr_name: ifr_name,
         ifr_ifru: libc::__c_anonymous_ifr_ifru {
@@ -63,10 +67,10 @@ pub fn enable_timestamping(socket: &Socket, ifname: &str) -> Result<(), ()> {
     unsafe { siocshwtstamp(socket.as_raw_fd(), &mut ifreq) }.map_err(|_| ())?;
 
     let so_timestamping = SoTimestamping {
-        flags: (libc::SOF_TIMESTAMPING_RAW_HARDWARE |
-            libc::SOF_TIMESTAMPING_RX_HARDWARE |
-            libc::SOF_TIMESTAMPING_TX_HARDWARE) as _,
-            bind_phc: 0,
+        flags: (libc::SOF_TIMESTAMPING_RAW_HARDWARE
+            | libc::SOF_TIMESTAMPING_RX_HARDWARE
+            | libc::SOF_TIMESTAMPING_TX_HARDWARE) as _,
+        bind_phc: 0,
     };
     cerr(unsafe {
         libc::setsockopt(
@@ -76,7 +80,8 @@ pub fn enable_timestamping(socket: &Socket, ifname: &str) -> Result<(), ()> {
             &so_timestamping as *const _ as *const libc::c_void,
             std::mem::size_of_val(&so_timestamping) as libc::socklen_t,
         )
-    }).map_err(|_| ())?;
+    })
+    .map_err(|_| ())?;
 
     Ok(())
 }
