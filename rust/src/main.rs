@@ -55,7 +55,7 @@ fn main() -> Result<()> {
     socket::enable_timestamping(&socket, &opts.ifname).ok();
 
     match opts.command {
-        Command::Rx => {}
+        Command::Rx => unimplemented!("rx"),
         Command::Tx => {
             socket
                 .send(&buf)
