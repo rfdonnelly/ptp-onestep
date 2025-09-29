@@ -1,3 +1,17 @@
+/// Implementation Notes
+///
+/// We use the highest-level APIs when available and augment with lower-level APIs when necessary.
+/// We use a mix of three APIs in order of highest level API to lowest: socket2, nix, libc.
+///
+/// The general approach is to limit lower-level APIs to creation (e.g., socket(), bind()) and keep
+/// to higher-level APIs (e.g., socket2::Socket::sendmsg()) for general use.
+///
+/// For example, socket2 doesn't provide AF_PACKET SOCK_RAW sockets so we create one using
+/// nix::sys::socket::socket() then convert it to a socket2 Socket using
+/// socket2::Socket::from_raw_fd.
+///
+/// In some cases we pass libc structs to nix function OR libc structs to libc functions because
+/// there are no higher-level APIs for these.
 use std::os::fd::AsRawFd;
 use std::os::fd::FromRawFd;
 
